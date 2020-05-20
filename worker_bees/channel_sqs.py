@@ -3,7 +3,7 @@ from worker_bees.spi import Channel
 
 
 class SqsChannel(Channel):
-    def __init__(self, *kwargs):
+    def __init__(self, **kwargs):
         self.__sqs = boto3.resource('sqs')
         job_queue = kwargs['job_queue']
         self.__job_queue = self.__sqs.get_queue_by_name(QueueName=job_queue)

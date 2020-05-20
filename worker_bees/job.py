@@ -6,29 +6,23 @@ import worker_bees.repo_dynamodb
 from worker_bees.spi import *
 
 _job_confs = {}
-_conf_cache = {}
 
 
-def _config(channel: str, repo: str, **kwargs):
-    conf = _conf_cache.get((channel, repo))
-    if not conf:
-        conf = (importlib.import_module(f'worker_bees.channel_{channel}').impl(**kwargs),
-                importlib.import_module(f'worker_bees.repo_{repo}').impl(**kwargs))
-        _conf_cache[(channel, repo)] = conf
-    return conf
+def _create_component(**kwargs):
+    return importlib.import_module(f'worker_bees.{kwargs["type"]}').impl(**kwargs)
 
 
-def kick_off(channel: str, repo: str, chunks, job_id: str = None, **kwargs) -> str:
+def kick_off(worker_channel: map, repo: map, completion_channel: map, chunks, job_id: str = None, job_id_attr: str = JOB_ATTR.ID) -> str:
     if not job_id:
         job_id = str(uuid.uuid4())
-    conf = _config(channel, repo)
+    worker_channel_impl = _create_component(**worker_channel)
+    repo_impl = _create_component(**repo)
+    completion_channel_impl = _create_component(**completion_channel)
+    conf = (worker_channel_impl, repo_impl, completion_channel_impl)
     _job_confs[job_id] = conf
-    channel_impl = conf[0]
-    repo_impl = conf[1]
-    channel_impl.send(job_id,
+    worker_channel_impl.send(job_id,
                       [{CHUNK_ATTR.CHUNK_ID: f'{job_id}/{i}', CHUNK_ATTR.PAYLOAD: chunk} for (i, chunk) in
                        enumerate(chunks)])
-    job_id_attr = kwargs.get('job_id_attr', JOB_ATTR.ID)
     repo_impl.save({job_id_attr: job_id, JOB_ATTR.COMPLETED: 0, JOB_ATTR.TOTAL: len(chunks)})
     return job_id
 
@@ -42,4 +36,4 @@ def complete(chunk_id: str):
     job[JOB_ATTR.COMPLETED] += 1
     conf[1].save(job)
     if job[JOB_ATTR.COMPLETED] == job[JOB_ATTR.TOTAL]:
-        print(f'COMPLETED {job_id}, {job[JOB_ATTR.TOTAL]} trunks')
+        conf[2].send(job_id, None)
