@@ -1,0 +1,1 @@
+Worker-bees is a simple helper for keeping track of job chunks and aggregate their completion status.
