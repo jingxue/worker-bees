@@ -1,8 +1,5 @@
 import importlib
 import uuid
-import boto3
-import worker_bees.channel_sqs
-import worker_bees.repo_dynamodb
 from worker_bees.spi import *
 
 _job_confs = {}
