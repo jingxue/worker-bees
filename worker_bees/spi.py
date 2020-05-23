@@ -1,8 +1,8 @@
 import collections
 from typing import List
 
-JobAttrT = collections.namedtuple('JobAttrT', ['ID', 'TOTAL', 'COMPLETED'])
-JOB_ATTR = JobAttrT('id', 'total', 'completed')
+JobAttrT = collections.namedtuple('JobAttrT', ['ID', 'TOTAL', 'COMPLETED', 'LAST_UPDATED'])
+JOB_ATTR = JobAttrT('id', 'total', 'completed', 'last_updated')
 
 ChunkAttrT = collections.namedtuple('ChunkAttrT', ['CHUNK_ID', 'PAYLOAD'])
 CHUNK_ATTR = ChunkAttrT('chunk_id', 'payload')
@@ -14,7 +14,10 @@ class Channel:
 
 
 class Repo:
-    def save(self, job: map):
+    def new_job(self, job: map):
+        pass
+
+    def inc_completed(self, job: map):
         pass
 
     def load(self, job_id: str) -> map:

@@ -11,7 +11,5 @@ class InMemQueueChannel(Channel):
         for chunk in chunks:
             self.__queue.append(chunk)
 
-    def receive(self) -> map :
-        return self.__queue.pop()
 
 impl = InMemQueueChannel
