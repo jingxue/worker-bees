@@ -20,4 +20,4 @@ def chunks(a_list, n):
         yield a_list[i:i + n]
 
 
-impl = SqsChannel
+impl = SnsChannel
