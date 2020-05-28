@@ -1,4 +1,5 @@
 import random
+import json
 from typing import List
 
 import boto3
@@ -18,7 +19,7 @@ class SqsChannel(Channel):
         delay = random.randrange(self.__random_delay) if self.__random_delay else 0
         messages = [
             {'Id': self._create_msg_id(chunk[CHUNK_ATTR.CHUNK_ID]),
-             'MessageBody': str(chunk),
+             'MessageBody': json.dumps(chunk),
              'DelaySeconds': delay}
             for chunk in chunk_payloads]
         for message_batch in self._chunks(messages, 10):
