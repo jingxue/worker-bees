@@ -1,6 +1,7 @@
 import importlib
 import uuid
 from worker_bees.spi import *
+from worker_bees.common import *
 
 _job_confs = {}
 
@@ -28,11 +29,9 @@ def kick_off(worker_channel: map, repo: map, completion_channel: map, chunks, jo
 
 
 def complete(chunk_id: str):
-    slash_i = chunk_id.rfind('/')
-    job_id = chunk_id[0:slash_i]
-    # chunk_index = chunk_id[slash_i:]
-    conf = _job_confs[job_id]
-    job = conf[1].load(job_id)
-    new_completed = conf[1].inc_completed(job)
+    job_id, _ = from_chunk_id(chunk_id)
+    _, repo, completion_channel = _job_confs[job_id]
+    job = repo.load(job_id)
+    new_completed = repo.inc_completed(job)
     if new_completed == job[JOB_ATTR.TOTAL]:
-        conf[2].send(job_id, None)
+        completion_channel.send(job_id, None)

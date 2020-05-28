@@ -7,9 +7,9 @@ from worker_bees.spi import Channel, CHUNK_ATTR
 class SnsChannel(Channel):
     def __init__(self, **kwargs):
         self.__sns = boto3.resource('sns')
-        topic = kwargs['topic_name']
-        self.__topic = self.__sns.get_queue_by_name(TopicName=topic)
-        print(f'Topic: {topic}')
+        topic_arn = kwargs['topic_arn']
+        self.__topic = self.__sns.Topic(topic_arn)
+        print(f'Topic: {topic_arn}')
 
     def send(self, job_id: str, chunk_payloads: List[map]):
         [self.__topic.publish(Message=str(chunk)) for chunk in chunk_payloads]
