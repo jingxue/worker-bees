@@ -1,7 +1,8 @@
 from typing import List
-
+import json
 import boto3
-from worker_bees.spi import Channel, CHUNK_ATTR
+
+from worker_bees.spi import Channel
 
 
 class SnsChannel(Channel):
@@ -12,7 +13,7 @@ class SnsChannel(Channel):
         print(f'Topic: {topic_arn}')
 
     def send(self, job_id: str, chunk_payloads: List[map]):
-        [self.__topic.publish(Message=str(chunk)) for chunk in chunk_payloads]
+        [self.__topic.publish(Message=json.dumps(chunk)) for chunk in chunk_payloads]
 
 
 def chunks(a_list, n):
