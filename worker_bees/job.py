@@ -38,4 +38,4 @@ def complete(repo: map, completion_channel: map, chunk_id: str):
     job = repo_impl.load(job_id)
     new_completed = repo_impl.inc_completed(job)
     if new_completed == job[JOB_ATTR.TOTAL]:
-        completion_channel_impl.send(job_id, [{'job_id': job_id, 'status': 'COMPLETED'}])
+        completion_channel_impl.send(job_id, [{'job_id': job_id, JOB_ATTR.TOTAL: job[JOB_ATTR.TOTAL], 'status': 'COMPLETED'}])
