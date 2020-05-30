@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from decimal import Decimal
 import boto3
 from boto3.dynamodb.conditions import Attr
@@ -17,7 +17,9 @@ class DynamoDBRepo(Repo):
         return self.__job_table.get_item(Key={JOB_ATTR.ID: job_id})['Item']
 
     def new_job(self, job: map):
-        job[JOB_ATTR.LAST_UPDATED] = self._wrap(datetime.now())
+        now = datetime.now()
+        job[JOB_ATTR.LAST_UPDATED] = self._wrap(now)
+        job[JOB_ATTR.EXPIRATION] = self._wrap(now + timedelta(days=7))
         self.__job_table.put_item(Item=job)
 
     def inc_completed(self, job: map):

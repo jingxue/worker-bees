@@ -1,8 +1,8 @@
 import collections
 from typing import List
 
-JobAttrT = collections.namedtuple('JobAttrT', ['ID', 'TOTAL', 'COMPLETED', 'LAST_UPDATED'])
-JOB_ATTR = JobAttrT('id', 'total', 'completed', 'last_updated')
+JobAttrT = collections.namedtuple('JobAttrT', ['ID', 'TOTAL', 'COMPLETED', 'LAST_UPDATED', 'EXPIRATION'])
+JOB_ATTR = JobAttrT('id', 'total', 'completed', 'last_updated', 'expiration')
 
 ChunkAttrT = collections.namedtuple('ChunkAttrT', ['CHUNK_ID', 'PAYLOAD'])
 CHUNK_ATTR = ChunkAttrT('chunk_id', 'payload')
